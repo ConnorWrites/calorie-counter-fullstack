@@ -7,7 +7,7 @@ import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const SECRET = "supersecretkey";
+const SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 
 const __dirname = path.resolve();
 
