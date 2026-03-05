@@ -106,7 +106,7 @@ app.delete("/foods/:id", authenticateToken, (req, res) => {
 // -----------------------------
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
