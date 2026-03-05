@@ -3,36 +3,38 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import db from "./database.js";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const SECRET = "supersecretkey";
 
+const __dirname = path.resolve();
+
+// -----------------------------
+// Middleware
+// -----------------------------
 app.use(cors());
 app.use(express.json());
 
-const SECRET = "supersecretkey";
-
-/* -----------------------------
-   JWT Middleware
-------------------------------*/
+// -----------------------------
+// JWT Middleware
+// -----------------------------
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-
   if (!authHeader) return res.status(401).json({ error: "No token provided" });
 
   const token = authHeader.split(" ")[1];
-
   jwt.verify(token, SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: "Invalid token" });
-
     req.user = user;
     next();
   });
 }
 
-/* -----------------------------
-   Register
-------------------------------*/
+// -----------------------------
+// Register
+// -----------------------------
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
@@ -50,28 +52,26 @@ app.post("/register", async (req, res) => {
   }
 });
 
-/* -----------------------------
-   Login
-------------------------------*/
+// -----------------------------
+// Login
+// -----------------------------
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
 
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-
   if (!user) return res.status(400).json({ error: "Invalid email or password" });
 
   const validPassword = await bcrypt.compare(password, user.password);
-
   if (!validPassword) return res.status(400).json({ error: "Invalid email or password" });
 
   const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "1h" });
   res.json({ token });
 });
 
-/* -----------------------------
-   Foods API
-------------------------------*/
+// -----------------------------
+// Foods API
+// -----------------------------
 app.get("/foods", authenticateToken, (req, res) => {
   const stmt = db.prepare("SELECT * FROM foods WHERE userId = ?");
   const userFoods = stmt.all(req.user.userId);
@@ -98,19 +98,18 @@ app.delete("/foods/:id", authenticateToken, (req, res) => {
   res.json({ success: true });
 });
 
-import path from "path";
-
-const __dirname = path.resolve();
-
+// -----------------------------
+// Serve React frontend
+// -----------------------------
 app.use(express.static(path.join(__dirname, "dist")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-/* -----------------------------
-   Start server
-------------------------------*/
+// -----------------------------
+// Start server
+// -----------------------------
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
