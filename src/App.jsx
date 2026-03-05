@@ -7,11 +7,12 @@ import Register from "./components/Register";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function App() {
+  // Load token from localStorage, or null if missing
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [authMode, setAuthMode] = useState("login");
   const [foods, setFoods] = useState([]);
 
-  // Save token to localStorage
+  // Save token to localStorage whenever it changes
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -21,22 +22,27 @@ function App() {
     }
   }, [token]);
 
-  // Fetch foods when token changes
+  // Fetch foods whenever token is available
   useEffect(() => {
     if (!token) return;
 
-    fetch(`${API_URL}/foods`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then(data => setFoods(Array.isArray(data) ? data : []))
-      .catch(error => {
+    const fetchFoods = async () => {
+      try {
+        console.log("Using token:", token);
+        console.log(`Fetching foods from: ${API_URL}/foods`);
+        const res = await fetch(`${API_URL}/foods`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error(`Failed to fetch foods: ${res.status}`);
+        const data = await res.json();
+        setFoods(Array.isArray(data) ? data : []);
+      } catch (error) {
         console.error("Failed to load foods:", error);
         setFoods([]);
-      });
+      }
+    };
+
+    fetchFoods();
   }, [token]);
 
   const totalCalories = Array.isArray(foods)
@@ -44,52 +50,69 @@ function App() {
     : 0;
 
   // Add food
-  function addFood(food) {
-    fetch(`${API_URL}/foods`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(food)
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to add food");
-        return res.json();
-      })
-      .then(newFood => setFoods(prev => [...prev, newFood]))
-      .catch(error => console.error(error));
-  }
+  const addFood = async (food) => {
+    if (!token) return console.error("Cannot add food: no token available");
+    try {
+      const res = await fetch(`${API_URL}/foods`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(food),
+      });
+      if (!res.ok) throw new Error(`Failed to add food: ${res.status}`);
+      const newFood = await res.json();
+      setFoods((prev) => [...prev, newFood]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Delete food
-  function deleteFood(id) {
-    fetch(`${API_URL}/foods/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to delete food");
-        return res.json();
-      })
-      .then(() => setFoods(prev => prev.filter(food => food.id !== id)))
-      .catch(error => console.error(error));
-  }
+  const deleteFood = async (id) => {
+    if (!token) return console.error("Cannot delete food: no token available");
+    try {
+      const res = await fetch(`${API_URL}/foods/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Failed to delete food: ${res.status}`);
+      await res.json();
+      setFoods((prev) => prev.filter((food) => food.id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Logout
-  function handleLogout() {
+  const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
     setAuthMode("login");
-  }
+  };
 
-  // Show login/register if no token
+  // Render login/register if no token
   if (!token) {
     if (authMode === "login") {
-      return <Login onLogin={setToken} onSwitch={() => setAuthMode("register")} />;
+      return (
+        <Login
+          onLogin={(newToken) => {
+            console.log("Login successful, token received:", newToken);
+            setToken(newToken);
+          }}
+          onSwitch={() => setAuthMode("register")}
+        />
+      );
     }
-    return <Register onSwitch={() => setAuthMode("login")} />;
+    return (
+    <Register 
+    onLogin={(newToken) => { 
+      console.log("Registration successful, token received:", newToken);
+      setToken(newToken);
+    }} 
+    onSwitch={() => setAuthMode("login")} /> 
+  );
   }
 
   // Main app view
