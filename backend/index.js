@@ -5,7 +5,7 @@ import cors from "cors";
 import db from "./database.js";
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
@@ -99,7 +99,6 @@ app.delete("/foods/:id", authenticateToken, (req, res) => {
 });
 
 import path from "path";
-import express from "express";
 
 const __dirname = path.resolve();
 
