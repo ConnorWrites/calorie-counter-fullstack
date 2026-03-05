@@ -4,12 +4,13 @@ import jwt from "jsonwebtoken";
 import cors from "cors";
 import db from "./database.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
-
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // -----------------------------
 // Middleware
