@@ -4,7 +4,7 @@ import FoodList from "./components/FoodList";
 import Login from "./components/Login";
 import Register from "./components/Register";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://calorie-counter-fullstack.onrender.com";
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
