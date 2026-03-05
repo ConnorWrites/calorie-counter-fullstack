@@ -12,7 +12,7 @@ export default function Login({ onLogin, onSwitch }) {
     setError("");
 
     try {
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:4000"}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -24,11 +24,15 @@ export default function Login({ onLogin, onSwitch }) {
         setError(data.error || "Login failed");
         return;
       }
-
+if (data.token) {
       onLogin(data.token); // pass token to App.jsx
-    } catch (err) {
-      console.error(err);
-      setError("Server error");
+      console.log("Login successful, token received:", data.token);
+    } else {
+      throw new Error("No token received");
+    }
+   } catch (err) {
+      setError(err.message);
+     console.error("Login error:", err);
     }
   }
 
