@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://calorie-counter-fullstack.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "https://calorie-counter-fullstack.onrender.com" || "http://localhost:4000";
 
 export default function Register({ onSwitch }) {
   const [email, setEmail] = useState("");

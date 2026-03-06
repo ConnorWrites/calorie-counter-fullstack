@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://calorie-counter-fullstack.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "https://calorie-counter-fullstack.onrender.com" || "http://localhost:4000";
 
 export default function Login({ onLogin, onSwitch }) {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ export default function Login({ onLogin, onSwitch }) {
     setError("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:4000"}/login`, {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
