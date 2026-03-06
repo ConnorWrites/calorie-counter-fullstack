@@ -4,7 +4,7 @@ import FoodList from "./components/FoodList";
 import Login from "./components/Login";
 import Register from "./components/Register";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "https://calorie-counter-fullstack.onrender.com" || "http://localhost:4000";
 
 function App() {
   // Load token from localStorage, or null if missing
