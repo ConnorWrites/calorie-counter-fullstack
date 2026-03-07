@@ -1,16 +1,118 @@
-# React + Vite
+Calorie Counter (Full Stack)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack calorie tracking application built with React, Node.js, Express, and SQLite.
+Users can register, log in, and track their daily food intake with automatic calorie totals.
 
-Currently, two official plugins are available:
+Live Demo:
+https://calorie-counter-fullstack.onrender.com
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+⸻
 
-## React Compiler
+Features
+	•	User authentication with JWT
+	•	Register and login system
+	•	Add foods with calorie counts
+	•	Delete foods
+	•	Automatic total calorie calculation
+	•	Persistent login using localStorage
+	•	Protected API routes
+	•	Deployed full-stack application
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+⸻
 
-## Expanding the ESLint configuration
+Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Frontend:
+	•	React
+	•	Vite
+	•	JavaScript
+	•	Fetch API
+
+Backend:
+	•	Node.js
+	•	Express
+	•	JWT authentication
+	•	bcrypt password hashing
+
+Database:
+	•	SQLite
+	•	better-sqlite3
+
+Deployment:
+	•	Render
+
+⸻
+
+How It Works
+	1.	Users register with an email and password.
+	2.	Passwords are hashed using bcrypt before being stored.
+	3.	When a user logs in, the server returns a JWT token.
+	4.	The frontend stores the token in localStorage.
+	5.	All protected API requests include the token in the Authorization header.
+	6.	The backend verifies the token before allowing access to food data.
+
+⸻
+
+API Endpoints
+
+Auth:
+
+POST /register
+Creates a new user account.
+
+POST /login
+Authenticates a user and returns a JWT token.
+
+Foods:
+
+GET /foods
+Returns all foods for the authenticated user.
+
+POST /foods
+Adds a new food item.
+
+DELETE /foods/:id
+Deletes a food item belonging to the authenticated user.
+
+Local Development
+Clone the repository:
+git clone https://github.com/ConnorWrites/calorie-counter-fullstack.git
+git calorie-counter-fullstack
+
+Install backend dependencies:
+cd backend
+npm install
+
+Run the backend:
+node index.js
+
+The server will start on http://localhost:4000
+Open the app in your browser and test the API.
+
+Deployment notes:
+This project is deployed on Render as a single full-stack service.
+The React frontend is built using:
+npm run build
+The resulting dist folder is served Express using:
+express.static()
+This allows the React frontend and Node API to run from the same server.
+
+Tradeoffs:
+SQLite is used for simplicity and ease of setup.
+However, on Render free services the filesystem is ephemeral, meaning the database may reset when the server redeploys.
+
+For production systems, a hosted database such as PostgreSQL would be recommended.
+
+Future imporvements:
+Possible features to extend the project:
+- Edit food entries
+- Daily calorie goals
+- Food search/autocomplete
+- Charts for calorie tracking
+- Mobile-friendly UI styling
+- PostgreSQL database
+
+Author:
+Conrad Wilken
+GitHub:
+https://github.com/ConnorWrites
