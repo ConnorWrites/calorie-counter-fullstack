@@ -104,9 +104,10 @@ app.delete("/foods/:id", authenticateToken, (req, res) => {
 // -----------------------------
 // Serve React frontend
 // -----------------------------
-app.use(express.static(path.join(__dirname, "dist")));
+const distPath = path.join(__dirname, "dist");
+app.use(express.static(distPath));
 
-app.get(/^\/(?!register|login|foods).*/, (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 }); 
 
