@@ -12,6 +12,11 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [foods, setFoods] = useState([]);
 
+  //Wake up server on initial load (for free hosting)
+useEffect(() => {
+  fetch("/login", { method: "GET" }).catch(() => {});
+}, []);
+
   // Save token to localStorage whenever it changes
   useEffect(() => {
     if (token) {

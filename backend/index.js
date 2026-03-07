@@ -46,7 +46,9 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const stmt = db.prepare("INSERT INTO users (email, password) VALUES (?, ?)");
     const info = stmt.run(email, hashedPassword);
-    res.json({ message: "User registered successfully", userId: info.lastInsertRowid });
+    const userId = info.lastInsertRowid;
+    const token = jwt.sign({ userId }, SECRET, { expiresIn: "5h" });
+    res.json({ userId, token });
   } catch (err) {
     if (err.code === "SQLITE_CONSTRAINT_UNIQUE") {
       return res.status(400).json({ error: "User already exists" });

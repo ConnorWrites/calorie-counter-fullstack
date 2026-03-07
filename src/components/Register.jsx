@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const API_URL = "https://calorie-counter-fullstack.onrender.com";
 
-export default function Register({ onSwitch }) {
+export default function Register({ onLogin, onSwitch }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +27,11 @@ export default function Register({ onSwitch }) {
         return;
       }
 
-      setSuccess("Registration successful! You can now login.");
+      if(data.token) {
+        onLogin(data.token); // pass token to App.jsx
+      } else{ 
+      setSuccess("Registration successful! You can now login."); 
+    }
     } catch (err) {
       console.error(err);
       setError("Server error");
