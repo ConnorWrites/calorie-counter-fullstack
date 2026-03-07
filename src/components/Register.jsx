@@ -29,6 +29,7 @@ export default function Register({ onLogin, onSwitch }) {
 
       if(data.token) {
         onLogin(data.token); // pass token to App.jsx
+      setSuccess("Registration successful! You are now logged in.");
       } else{ 
       setSuccess("Registration successful! You can now login."); 
     }

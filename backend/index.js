@@ -45,8 +45,11 @@ app.post("/register", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const stmt = db.prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    const info = stmt.run(email, hashedPassword);
-    const userId = info.lastInsertRowid;
+    const transaction = db.transaction(() => {
+      const info = stmt.run(email, hashedPassword);
+      return info.lastInsertRowid;
+    });
+    const userId = transaction();
     const token = jwt.sign({ userId }, SECRET, { expiresIn: "5h" });
     res.json({ userId, token });
   } catch (err) {
